@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inner Peace Time</title>
+    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./custom.css">
+    </head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="./assets/logo.png" style="height: 50px" />
+            <h1 class="text-center">Inner Peace Time App Statistics</h1>
+        </div>      
+        <div class="list-group">
+            <p>This webpage is developed to assist processing the Inner Peace Time user activity.</p>
+            <h2>
+                Instructions to follow:
+            </h2>
+            <ol>
+                <li>Download the CSV file from WordPress before uploading it here.</li>
+                <li>Upload the CSV here by using "Browse".</li>
+                <li>Use Section 1 to process all the data and Section 2 to process only 100,200, and 300 series.</li>
+                <li>Click on "Submit1" or "Submit2".</li>
+                <li>The files will be pushed to AWS in the backend and processed.</li>
+                <li>The processed files will be shown below, please wait for 5 seconds and click on refresh.</li>
+                <li>Once the processed file is shown in the "Processed Files", click on "Download".</li>
+                <li>You can delete the file from webpage using "Delete".</li>
+            </ol>
+        </div>
+        <h2> Upload your files here</h2>
+        <div class="form-group">
+            <h3>Section 1: To process all data:</h3>
+            <input type="file" multiple class="form-control" id="file-input">
+            <button class="btn btn-primary btn-block" onclick="uploadFiles('wp-tempbucket')">Submit 1</button>
+        </div>
+        <div class="form-group">
+            <h3>Section 2: To process 100,200, and 300 series:</h3>
+            <input type="file" multiple class="form-control" id="file-input">
+            <button class="btn btn-primary rounded-pill" onclick="uploadFiles('wp-tempbucket2')">Submit 2</button>
+        </div>
+        <h2>Processed files</h2>
+        <table class="table table-striped" id="fileTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Size (Bytes)</th>
+                    <th>Download</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</body>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.932.0.min.js"></script>
+<script src="script.js"></script>
+</html>
