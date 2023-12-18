@@ -27,7 +27,7 @@ def lambda_handler(event, context):
     
     # Clean up the temporary processed CSV file
     os.remove(processed_csv_path)
-
+    
 def duration_to_seconds(duration):
     if duration is None:
       return None
@@ -43,32 +43,24 @@ def seconds_to_duration(seconds):
     # Convert seconds to minutes and seconds
     minutes, seconds = divmod(seconds, 60)
     return f"{int(minutes)} min {int(seconds)} sec"
-
     
 def process_csv(csv_file_path):
     # Read the CSV file into a DataFrame
     df = pd.read_csv(csv_file_path)
-    
     df_dropped = df[df['User Login'].str.startswith(('1','2','3'))]
+    df_dropped = df_dropped.reset_index(drop=True)
     
-    # Split columns and reset index
-    action_values = df_dropped['Activity_action'].astype(str).str.split('|').apply(pd.Series).stack().reset_index(level=1, drop=True)
-    date_values = df_dropped['Activity_action-date'].astype(str).str.split('|').apply(pd.Series).stack().reset_index(level=1, drop=True)
-    value_values = df_dropped['Activity_action-value'].astype(str).str.split('|').apply(pd.Series).stack().reset_index(level=1, drop=True)
-
-    # Reset index of each DataFrame
-    df_dropped.reset_index(drop=True, inplace=True)
-    action_values.reset_index(drop=True, inplace=True)
-    date_values.reset_index(drop=True, inplace=True)
-    value_values.reset_index(drop=True, inplace=True)
-
-    # Concatenate DataFrames
-    df_final = pd.concat([
-        df_dropped.drop(['Activity_action', 'Activity_action-date', 'Activity_action-value'], axis=1),
-        action_values.rename('Action'),
-        date_values.rename('Date'),
-        value_values.rename('Value')
-    ], axis=1)
+    # Split the 'Activity_action_date' and 'Activity_action_value' columns by ('|') into multiple rows
+    action_values = df_dropped['Activity_action'].astype(str).str.split('|').apply(pd.Series, 1).stack()
+    date_values = df_dropped['Activity_action-date'].astype(str).str.split('|').apply(pd.Series, 1).stack()
+    value_values = df_dropped['Activity_action-value'].astype(str).str.split('|').apply(pd.Series, 1).stack()
+    
+    # Set index to match stacked data and concatenate the split values with the original DataFrame
+    action_values.index = action_values.index.droplevel(-1)
+    date_values.index = date_values.index.droplevel(-1)
+    value_values.index = value_values.index.droplevel(-1)
+    
+    df_final = pd.concat([df_dropped.drop(['Activity_action','Activity_action-date', 'Activity_action-value'], axis=1), action_values.rename('Action'),date_values.rename('Date'), value_values.rename('Value')], axis=1)
     video_details = {
         'view-video': {
             '/videos/21': {
