@@ -95,8 +95,9 @@ function deleteFile(s3bucket,key){
     })
 }
 
-function uploadFiles(s3bucket) {
-    var files = document.getElementById("file-input").files;
+function uploadFiles(s3bucket, section) {
+    var files = document.getElementById(`file-input${section}`).files;
+    
     var fileCount = files.length;
 
     document.getElementById("fileTable").style.display = "none";
@@ -121,6 +122,5 @@ function uploadFiles(s3bucket) {
         });
     }
 }
-
 
 refreshFileList("wp-resultbucket")

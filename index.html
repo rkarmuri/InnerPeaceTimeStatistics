@@ -32,13 +32,13 @@
         <h2> Upload your files here</h2>
         <div class="form-group">
             <h3>Section 1: To process all data:</h3>
-            <input type="file" multiple class="form-control" id="file-input">
-            <button class="btn btn-primary btn-block" onclick="uploadFiles('wp-tempbucket')">Submit 1</button>
+            <input type="file" multiple class="form-control" id="file-input1">
+            <button class="btn btn-primary btn-block" onclick="uploadFiles('wp-tempbucket',1)">Submit 1</button>
         </div>
         <div class="form-group">
             <h3>Section 2: To process 100,200, and 300 series:</h3>
-            <input type="file" multiple class="form-control" id="file-input">
-            <button class="btn btn-primary rounded-pill" onclick="uploadFiles('wp-tempbucket2')">Submit 2</button>
+            <input type="file" multiple class="form-control" id="file-input2">
+            <button class="btn btn-primary rounded-pill" onclick="uploadFiles('wp-tempbucket2',2)">Submit 2</button>
         </div>
         <h2>Processed files</h2>
         <table class="table table-striped" id="fileTable" style="display: none;">
