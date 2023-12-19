@@ -9,6 +9,26 @@ AWS.config.update({
 
 var s3 = new AWS.S3();
 
+document.addEventListener("DOMContentLoaded", function () {
+    const currentTime = new Date();
+    const hours = currentTime.getHours();
+    const isNightTime = hours >= 18;
+
+    if (isNightTime) {
+        document.body.classList.add("dark-mode");
+        applyNightModeStyles("./assets/logo2.png", "#84bb4c");
+    }
+});
+function applyNightModeStyles(newLogoSrc, newHeaderColor) {
+    const logoElement = document.querySelector(".header img");
+    logoElement.src = newLogoSrc;
+
+    const headerElements = document.querySelectorAll(".header h1, h2, h3");
+    headerElements.forEach((element) => {
+        element.style.color = newHeaderColor;
+    });
+}
+
 function refreshFileList(s3bucket){
     var tableBody = document.querySelector('#fileTable tbody');
     tableBody.innerHTML="";
