@@ -12,7 +12,7 @@ var s3 = new AWS.S3();
 document.addEventListener("DOMContentLoaded", function () {
     const currentTime = new Date();
     const hours = currentTime.getHours();
-    const isNightTime = hours >= 18;
+    const isNightTime = hours >= 18 || hours < 7;
 
     if (isNightTime) {
         document.body.classList.add("dark-mode");
