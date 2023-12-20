@@ -16,12 +16,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (isNightTime) {
         document.body.classList.add("dark-mode");
-        applyNightModeStyles("./assets/logo2.png", "#84bb4c");
+        applyNightModeStyles("./assets/logo2.png",'./assets/github2.png', "#84bb4c");
     }
 });
-function applyNightModeStyles(newLogoSrc, newHeaderColor) {
+function applyNightModeStyles(newLogoSrc, newGitSrc, newHeaderColor) {
     const logoElement = document.querySelector(".header img");
+    const gitHubElement = document.querySelector(".header a img");
     logoElement.src = newLogoSrc;
+    gitHubElement.src = newGitSrc
 
     const headerElements = document.querySelectorAll(".header h1, h2, h3");
     headerElements.forEach((element) => {
