@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: flask-app
+    env: docker
+    plan: free
+    dockerfilePath: Dockerfile
+    buildCommand: ""
+    startCommand: python app.py
+    disk:
+      - name: upload-disk
+        mountPath: /app/uploads
+      - name: processed-disk
+        mountPath: /app/processed

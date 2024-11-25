@@ -1,1 +1,24 @@
 pandas_layer
+.DS_Store
+# Byte-compiled and cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+
+# Log files
+*.log
+*.out
+*.err
+
+# Settings files
+*.env
+
+# Docker-related files
+*.dockerignore
+docker-compose*.yml
+

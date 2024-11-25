@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPT Statistics</title>
+    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family:'Nunito', sans-serif;
+            color: #342c2c;
+            min-height: 100vh;
+            position: relative;
+            justify-content: center;
+            align-items: center;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom right, #84bb4c, #632c8c);
+            opacity: 0.4;
+            z-index: -1;
+            min-height: 100vh;
+            backdrop-filter: blur(5px);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content:flex-start;
+        }
+
+        .header img {
+            margin: 10px;
+            padding: 10px;
+            height: 70px;
+        }
+
+        a {
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #84bb4c;
+        }
+
+        .header .h1 {
+            margin: 0px;
+            padding: 10px 10px 30px 40px; 
+        }
+
+        h1, h2, h3 {
+            color: #632c8c;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-primary,.delete-btn {
+            background-color: #84bb4c;
+            color:#632c8c;
+            border-radius: 8px;
+            padding: 0.4rem;
+            block-size: 30px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary:hover,.delete-btn:hover {
+            background-color: #ffffff;
+            border: 1px solid #84bb4c;
+            transform: scale(1.1);
+            transition: all 0.3s ease-in;
+        }
+
+        input[type="file"] {
+            cursor: pointer;
+            padding: 0.4rem;
+        }
+
+        .list-group {
+            padding: 0.6rem;
+        }
+
+        .list-group h2{
+            padding: 0.6rem 0;
+        }
+
+        .items {
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        @media(max-width:468px){
+            h1 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+    </head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="./assets/logo.png"/>
+            <h1 class="text-center">Inner Peace Time App Statistics</h1>
+            <a href="https://github.com/rkarmuri/inner-peace-time-statistics" target="_blank"><img src="./assets/github.svg" alt="GitHub"></a>
+        </div>      
+        <div class="list-group">
+            <p>This webpage is developed to assist processing the Inner Peace Time user activity.</p>
+            <h2>
+                Instructions to follow:
+            </h2>
+            <ol class="items">
+                <li><p>Download the CSV file from WordPress before uploading it here.</p>
+                <span>(Instructions to download CSV file are given in <a href="https://github.com/rkarmuri/inner-peace-time-statistics/blob/4b7a2e84a7025e690be06d99887d0b7ddd9116b2/WordPress%20export%20instructions.md" target="_blank" rel="noopener noreferrer">here</a>)</span></li>
+                <li><p>Upload the CSV here by using "Browse"/"Choose Files".</p></li>
+                <li><p>Use Section 1 to process all the data and Section 2 to process only 100,200, and 300 series.</p></li>
+                <li><p>Click on "Submit1" or "Submit2".</p></li>
+                <li><p>The files will be pushed to AWS in the backend and processed.</p></li>
+                <li><p>The processed files will be shown below, please wait for 5 seconds and click on refresh.</p></li>
+                <li><p>Once the processed file is shown in the "Processed Files", click on "Download".</p></li>
+                <li><p>You can delete the file from webpage using "Delete".</p></li>
+            </ol>
+        </div>
+        <h2> Upload your files here</h2>
+        <div class="form-group">
+            <h3>Section 1: To process all data:</h3>
+            <input type="file" multiple class="form-control" id="file-input1">
+            <button class="btn btn-primary btn-block" onclick="uploadFiles(1)">Submit 1</button>
+        </div>
+        <div class="form-group">
+            <h3>Section 2: To process 100,200, and 300 series:</h3>
+            <input type="file" multiple class="form-control" id="file-input2">
+            <button class="btn btn-primary rounded-pill" onclick="uploadFiles(2)">Submit 2</button>
+        </div>
+        <h2>Uploaded Files</h2>
+        <table class="table table-striped" id="uploadedFileTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Size</th>
+                    <th>Download</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <h2>Processed files</h2>
+        <table class="table table-striped" id="processedFileTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Size (Bytes)</th>
+                    <th>Download</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+<script src="process.js">
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-var region="us-east-2";
+/*var region="us-east-2";
 var accessKeyId = "";
 var secretAccessKey = "";
 
@@ -125,4 +125,4 @@ function uploadFiles(s3bucket, section) {
     }
 }
 
-refreshFileList("wp-resultbucket")
+refreshFileList("wp-resultbucket")*/

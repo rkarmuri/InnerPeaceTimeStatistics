@@ -50,6 +50,12 @@ body::before {
     padding: 10px 10px 30px 40px; 
 }
 
+a {
+    color: inherit;      /* Use the current text color */
+    text-decoration: none; /* Remove underline */
+}
+
+
 h1, h2, h3 {
     color: #632c8c;
 }

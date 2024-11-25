@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import boto3
 import tempfile
+from datetime import datetime
 
 def lambda_handler(event, context):
     # Retrieve the S3 bucket and key from the S3 event
@@ -11,23 +12,25 @@ def lambda_handler(event, context):
     # Download the CSV file to a temporary location
     s3 = boto3.client('s3')
     temp_file_path = tempfile.mktemp()
-    try:
-        s3.download_file(bucket, key, temp_file_path)
-        print("File downloaded successfully")
-    except Exception as e:
-        print(f"Error downloading file: {e}")
+    s3.download_file(bucket, key, temp_file_path)
 
     # Process the CSV file using your script
     processed_csv_path = process_csv(temp_file_path)
+
+    # Get the current date and time
+    current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    # Define the new file name with the current date and time
+    new_file_name = f"data_{current_datetime}.csv"
     
     # Upload the processed CSV file to another S3 bucket
     destination_bucket = 'wp-resultbucket'
-    destination_key = 'processed/processed_data.csv'
+    destination_key = f'processed/{new_file_name}'
     s3.upload_file(processed_csv_path, destination_bucket, destination_key)
     
     # Clean up the temporary processed CSV file
     os.remove(processed_csv_path)
-    
+
 def duration_to_seconds(duration):
     if duration is None:
       return None
@@ -47,13 +50,14 @@ def seconds_to_duration(seconds):
 def process_csv(csv_file_path):
     # Read the CSV file into a DataFrame
     df = pd.read_csv(csv_file_path)
-    df_dropped = df[df['User Login'].str.startswith(('1','2','3'))]
-    df_dropped = df_dropped.reset_index(drop=True)
+    
+    df_dropped = df.drop([0])
     
     # Split the 'Activity_action_date' and 'Activity_action_value' columns by ('|') into multiple rows
-    action_values = df_dropped['Activity_action'].astype(str).str.split('|').apply(pd.Series, 1).stack()
-    date_values = df_dropped['Activity_action-date'].astype(str).str.split('|').apply(pd.Series, 1).stack()
-    value_values = df_dropped['Activity_action-value'].astype(str).str.split('|').apply(pd.Series, 1).stack()
+    # action_values = df_dropped['Activity_action'].astype(str).str.split('|').apply(pd.Series, 1).stack()
+    action_values = df_dropped['Activity_action'].astype(str).str.split('|').apply(lambda x: pd.Series(x), 1).stack()
+    date_values = df_dropped['Activity_action-date'].astype(str).str.split('|').apply(lambda x: pd.Series(x), 1).stack()
+    value_values = df_dropped['Activity_action-value'].astype(str).str.split('|').apply(lambda x: pd.Series(x), 1).stack()
     
     # Set index to match stacked data and concatenate the split values with the original DataFrame
     action_values.index = action_values.index.droplevel(-1)
@@ -61,6 +65,7 @@ def process_csv(csv_file_path):
     value_values.index = value_values.index.droplevel(-1)
     
     df_final = pd.concat([df_dropped.drop(['Activity_action','Activity_action-date', 'Activity_action-value'], axis=1), action_values.rename('Action'),date_values.rename('Date'), value_values.rename('Value')], axis=1)
+    
     video_details = {
         'view-video': {
             '/videos/21': {
@@ -142,6 +147,16 @@ def process_csv(csv_file_path):
                 'video_number': 70,
                 'duration': '8:28',
                 'title': 'Body Scan'
+            },
+            '/videos/218': {
+                'video_number': 218,
+                'duration': '06:10',
+                'title': 'Renew Your Day'
+            },
+            '/videos/222':{
+                'video_number': 222,
+                'duration': '05:15',
+                'title': 'Gratitude for You'
             }
         }
     }
@@ -176,7 +191,7 @@ def process_csv(csv_file_path):
     df_final['video_duration'] = df_final['video_duration_seconds'].apply(seconds_to_duration)
     df_final = df_final.drop(columns=['video_duration_seconds'])
     
-    processed_csv_path = '/tmp/processed_data.csv'
+    processed_csv_path = f"/tmp/data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
     df_final.to_csv(processed_csv_path, index=False)
 
     return processed_csv_path
